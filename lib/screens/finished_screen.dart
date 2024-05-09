@@ -3,19 +3,24 @@ import 'package:yaqidh_game/analytics/camera.dart';
 import 'package:yaqidh_game/analytics/logger.dart';
 import 'package:yaqidh_game/helper/level.dart';
 import 'package:yaqidh_game/screens/menu_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 import '../constants.dart';
 
 class FinishedScreen extends StatefulWidget {
-  const FinishedScreen({super.key});
+  final String studentId;
+
+  const FinishedScreen({Key? key, required this.studentId}) : super(key: key);
 
   @override
   State<FinishedScreen> createState() => _FinishedScreenState();
 }
 
 class _FinishedScreenState extends State<FinishedScreen> {
-
   bool dataTransmitted = false;
+  String? videoFilePath;
 
   int get correctAnswers {
     List<bool> answerCorrectness = [];
@@ -39,18 +44,65 @@ class _FinishedScreenState extends State<FinishedScreen> {
 
   @override
   void initState() {
-    _stopRecording();
+    _stopRecordingAndSaveData();
     super.initState();
   }
 
-  Future<void> _stopRecording() async {
-    await Camera.stopRecordingVideo();
+  Future<void> _stopRecordingAndSaveData() async {
+    videoFilePath = await Camera.stopRecordingVideo();
+    //if (videoFilePath != null) {
+      await _uploadVideoAndSaveData(widget.studentId);
+    //}
     setState(() {
       dataTransmitted = true;
     });
   }
 
-  @override
+  Future<void> _uploadVideoAndSaveData(String studentId) async {
+    try {
+      // Upload video to Firebase Storage
+      /*File videoFile = File(videoFilePath!);
+      String fileName = 'videos/${DateTime.now().millisecondsSinceEpoch}.mp4';
+      Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+      UploadTask uploadTask = storageRef.putFile(videoFile);
+      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() => null);
+      String videoUrl = await taskSnapshot.ref.getDownloadURL();*/
+
+      // Save video URL and correct answers to Firestore
+      await FirebaseFirestore.instance.collection('students').doc(studentId).update({
+        //'videoUrl': videoUrl,
+        'correctAnswers': correctAnswers,
+        'isTested': true,
+      });
+
+      print('Data saved successfully.');
+    } catch (e) {
+      print('Error saving data: $e');
+      _showErrorDialog('Error saving data. Please try again later.');
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -112,8 +164,7 @@ class _FinishedScreenState extends State<FinishedScreen> {
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text("Menu", style: TextStyle(fontSize: 25, color: Colors.white),),
+                          padding: EdgeInsets.all(8),child: Text("Menu", style: TextStyle(fontSize: 25, color: Colors.white),),
                         ),
                       ),
                     ),
@@ -142,7 +193,7 @@ class _FinishedScreenState extends State<FinishedScreen> {
     ).toList();
   }
 
-  List<Widget> _getChosenItemsAsImages(LevelAnswer levelAnswer) {
+List<Widget> _getChosenItemsAsImages(LevelAnswer levelAnswer) {
     return levelAnswer.chosenOptions.map((option) =>
         Padding(
           padding: const EdgeInsets.only(right: 8.0),

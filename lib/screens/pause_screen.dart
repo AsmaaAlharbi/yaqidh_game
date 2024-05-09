@@ -1,24 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:yaqidh_game/screens/task_screen.dart';
 import 'package:yaqidh_game/widgets/content_screen.dart';
 import 'package:video_player/video_player.dart';
 
 class PauseScreen extends StatefulWidget {
-
   final int nextLevelId;
+  final String studentId; // Add studentId parameter
 
-  const PauseScreen({super.key, required this.nextLevelId});
+  const PauseScreen({super.key, required this.nextLevelId, required this.studentId});
 
   @override
   State<PauseScreen> createState() => _PauseScreenState();
 }
 
 class _PauseScreenState extends State<PauseScreen> {
-
   VideoPlayerController? _controller;
-  late Future _initializeVideoPlayerFuture;
 
   @override
   void initState() {
@@ -49,7 +46,7 @@ class _PauseScreenState extends State<PauseScreen> {
               child: _controller != null && _controller!.value.isInitialized
                   ? AspectRatio(
                       aspectRatio: _controller!.value.aspectRatio,
-                      child:VideoPlayer(_controller!),
+                      child: VideoPlayer(_controller!),
                     )
                   : const CircularProgressIndicator()
             ),
@@ -60,13 +57,15 @@ class _PauseScreenState extends State<PauseScreen> {
   }
 
   void _nextLevel(BuildContext context) {
-
     Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => TaskScreen(levelId: widget.nextLevelId),
-          transitionDuration: Duration.zero,
-          reverseTransitionDuration: Duration.zero,
-        )
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => TaskScreen(
+          levelId: widget.nextLevelId,
+          studentId: widget.studentId, // Pass studentId to TaskScreen
+        ),
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      )
     );
   }
 }

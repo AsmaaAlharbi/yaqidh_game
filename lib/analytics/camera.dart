@@ -1,5 +1,5 @@
 import 'package:camera/camera.dart';
-import 'package:yaqidh_game/analytics/api.dart';
+//import 'package:yaqidh_game/analytics/api.dart';
 import 'dart:io';
 
 class Camera {
@@ -13,10 +13,10 @@ class Camera {
         (camera) => camera.lensDirection == CameraLensDirection.front);
     _cameraController = CameraController(front, ResolutionPreset.max);
     await _cameraController.initialize();
-    isLoading;
+    isLoading = false;
   }
 
-  static recordVideo() async {
+  static Future<void> recordVideo() async {
     if (isRecording) {
       print("IS ALREADY RECORDING (but wants to start)");
       return;
@@ -24,27 +24,28 @@ class Camera {
     await _cameraController.prepareForVideoRecording();
     await _cameraController.startVideoRecording();
     isRecording = true;
+    print("Video recording started.");
   }
 
-  static stopRecordingVideo() async {
+  static Future<String?> stopRecordingVideo() async {
     if (!isRecording) {
       print("IS NOT RECORDING (but wants to stop)");
-      return;
+      return null;
     }
-    /*final file = await _cameraController.stopVideoRecording();
-    isRecording = false;
-    print("FILM SAVED");
-    print("Path: ${file.path}");
-    await Api.transferData(file.path);*/
-
-    final file = await _cameraController.stopVideoRecording();
-    isRecording = false;
-    print("FILM SAVED");
-    String desktopPath = 'C:\\Users\\isooo\\OneDrive\\Desktop'; 
-    print("Path: ${file.path}");
-    String destinationPath = '$desktopPath/${file.path.split('/').last}';
-    await File(file.path).copy(destinationPath);
-    print("File copied to desktop successfully!");
+    try {
+      final file = await _cameraController.stopVideoRecording();
+      isRecording = false;
+      print("FILM SAVED");
+      String desktopPath = 'C:\\Users\\isooo\\OneDrive\\Desktop';
+      print("Path: ${file.path}");
+      String destinationPath = '$desktopPath/${file.path.split('/').last}';
+      await File(file.path).copy(destinationPath);
+      print("File copied to desktop successfully!");
+      return file.path; // Return the file path
+    } catch (e) {
+      print("Error stopping video recording: $e");
+      return null;
+    }
   }
 
   static dispose() {

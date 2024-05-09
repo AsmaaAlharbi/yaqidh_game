@@ -1,18 +1,16 @@
 import 'dart:math';
-
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:yaqidh_game/screens/finished_screen.dart';
 import 'package:yaqidh_game/screens/pause_screen.dart';
 import 'package:yaqidh_game/widgets/content_screen.dart';
 import 'package:yaqidh_game/widgets/image_button.dart';
-
 import '../analytics/logger.dart';
 import '../helper/level.dart';
 
 class TaskScreen extends StatefulWidget {
-
   final int levelId;
+  final String studentId; // Added studentId
 
   late final int wantedItem;
 
@@ -20,7 +18,7 @@ class TaskScreen extends StatefulWidget {
   int get optionAmount => level.options.length;
   int get itemsPerRow => (optionAmount / 2).ceil();
 
-  TaskScreen({super.key, required this.levelId}) {
+  TaskScreen({super.key, required this.levelId, required this.studentId}) {
     wantedItem = Random().nextInt(optionAmount);
   }
 
@@ -44,10 +42,16 @@ class _TaskScreenState extends State<TaskScreen> {
       seconds: 25,
       child: Stack(
         children: [
-          ImageButton("assets/menu/sound_button.png", onTapDown: (_) => _playSound(),),
+          ImageButton(
+            "assets/menu/sound_button.png",
+            onTapDown: (_) => _playSound(),
+          ),
           Column(
             children: [
-              Text(widget.level.task, style: const TextStyle(fontSize: 60),),
+              Text(
+                widget.level.task,
+                style: const TextStyle(fontSize: 60),
+              ),
               Expanded(
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -62,13 +66,16 @@ class _TaskScreenState extends State<TaskScreen> {
                       child: Container(
                         margin: const EdgeInsets.all(17),
                         decoration: BoxDecoration(
-                          color: selectedItems.contains(index) ? const Color(0xFF83EF83) : const Color(0xFFEEEEEE),
-                          borderRadius: const BorderRadius.all(Radius.circular(30))
-                        ),
+                            color: selectedItems.contains(index)
+                                ? const Color(0xFF83EF83)
+                                : const Color(0xFFEEEEEE),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(30))),
                         child: Padding(
                           padding: const EdgeInsets.all(17),
                           child: Center(
-                            child: Image.asset(widget.level.options[index].path),
+                            child:
+                                Image.asset(widget.level.options[index].path),
                           ),
                         ),
                       ),
@@ -89,7 +96,6 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void _tapOnFruit(BuildContext context, int index) {
-
     setState(() {
       if (selectedItems.contains(index)) {
         selectedItems.remove(index);
@@ -109,24 +115,26 @@ class _TaskScreenState extends State<TaskScreen> {
   }
 
   void _changeScreen(BuildContext context) {
-
     Widget newScreen;
     if (widget.levelId + 1 == levels.length) {
-      newScreen = const FinishedScreen();
+      newScreen = FinishedScreen(
+          studentId: widget.studentId); // Pass studentId to FinishedScreen
     } else {
-      newScreen = PauseScreen(nextLevelId: widget.levelId + 1);
+      newScreen = PauseScreen(
+          nextLevelId: widget.levelId + 1,
+          studentId: widget.studentId); // Pass studentId to PauseScreen
     }
 
-    Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => newScreen,
-          transitionDuration: Duration.zero,
-          reverseTransitionDuration: Duration.zero,
-        )
-    );
+    Navigator.of(context).pushReplacement(PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => newScreen,
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    ));
   }
 
   double _calcChildAspectRatio(BuildContext context) {
-    return (MediaQuery.of(context).size.width / widget.itemsPerRow) / ((MediaQuery.of(context).size.height - 250) / (widget.optionAmount/widget.itemsPerRow).ceil());
+    return (MediaQuery.of(context).size.width / widget.itemsPerRow) /
+        ((MediaQuery.of(context).size.height - 250) /
+            (widget.optionAmount / widget.itemsPerRow).ceil());
   }
 }
