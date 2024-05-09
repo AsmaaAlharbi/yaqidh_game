@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAOBrl7nXDyBwwuyLhWP2gNfIIdwR0Sc_g</string>
+	<key>GCM_SENDER_ID</key>
+	<string>80276160707</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.yaqidhGame.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>seniorproject-b001e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>seniorproject-b001e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:80276160707:ios:e5ee4c44df5af4a62da276</string>
+	<key>DATABASE_URL</key>
+	<string>https://seniorproject-b001e-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
