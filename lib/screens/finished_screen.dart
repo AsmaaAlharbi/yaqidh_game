@@ -101,8 +101,8 @@ class _FinishedScreenState extends State<FinishedScreen> {
                       ],
                     ),
                     const SizedBox(height: 15,),
-                    const Text("Your score", style: TextStyle(fontSize: 30, color: kidDiagnosticBlue,),),
-                    Text("$correctAnswers out of 9", style: const TextStyle(fontSize: 40, color: kidDiagnosticBlue,),),
+                    const Text("الدرجة الكلية", style: TextStyle(fontSize: 30, color: kidDiagnosticBlue,),),
+                    Text("9 / $correctAnswers", style: const TextStyle(fontSize: 40, color: kidDiagnosticBlue,),),
                     const SizedBox(height: 15,),
                     GestureDetector(
                       onTapDown: (_) => { _backToMenu(context) },

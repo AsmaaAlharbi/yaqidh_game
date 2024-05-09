@@ -42,7 +42,7 @@ class _PauseScreenState extends State<PauseScreen> {
       seconds: 10,
       child: Column(
         children: [
-          const Text("A little break", style: TextStyle(fontSize: 60),),
+          const Text("فلننتظر قليلًا", style: TextStyle(fontSize: 60),),
           Center(
             child: SizedBox(
               height: 400,
