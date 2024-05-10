@@ -22,7 +22,7 @@ class _FinishedScreenState extends State<FinishedScreen> {
   bool dataTransmitted = false;
   String? videoFilePath;
 
-  int get correctAnswers {
+  /*int get correctAnswers {
     List<bool> answerCorrectness = [];
     for (int i = 0; i < Logger.answers.length; i++) {
       LevelAnswer a = Logger.answers[i];
@@ -40,6 +40,30 @@ class _FinishedScreenState extends State<FinishedScreen> {
       correctAnswers = 0;
     }
     return correctAnswers;
+  }*/
+  int get correctAnswers {
+    int correctAnswers = 0;
+
+    for (int i = 0; i < Logger.answers.length; i++) {
+      LevelAnswer a = Logger.answers[i];
+      bool hasIncorrect = false;
+
+      for (int chosen in a.chosenOptions) {
+        if (!levels[i].options[chosen].isCorrect) {
+          hasIncorrect = true;
+          break;
+        }
+      }
+
+      if (!hasIncorrect) {
+        correctAnswers += a.chosenOptions
+            .where((chosen) => levels[i].options[chosen].isCorrect)
+            .length;
+      }
+    }
+
+    // Ensure correctAnswers does not drop below zero
+    return correctAnswers < 0 ? 0 : correctAnswers;
   }
 
   @override
@@ -51,7 +75,7 @@ class _FinishedScreenState extends State<FinishedScreen> {
   Future<void> _stopRecordingAndSaveData() async {
     videoFilePath = await Camera.stopRecordingVideo();
     //if (videoFilePath != null) {
-      await _uploadVideoAndSaveData(widget.studentId);
+    await _uploadVideoAndSaveData(widget.studentId);
     //}
     setState(() {
       dataTransmitted = true;
@@ -69,7 +93,10 @@ class _FinishedScreenState extends State<FinishedScreen> {
       String videoUrl = await taskSnapshot.ref.getDownloadURL();*/
 
       // Save video URL and correct answers to Firestore
-      await FirebaseFirestore.instance.collection('students').doc(studentId).update({
+      await FirebaseFirestore.instance
+          .collection('students')
+          .doc(studentId)
+          .update({
         //'videoUrl': videoUrl,
         'correctAnswers': correctAnswers,
         'isTested': true,
@@ -102,7 +129,7 @@ class _FinishedScreenState extends State<FinishedScreen> {
     );
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -124,9 +151,8 @@ class _FinishedScreenState extends State<FinishedScreen> {
           child: Center(
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(30))
-              ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(30))),
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -138,33 +164,62 @@ class _FinishedScreenState extends State<FinishedScreen> {
                         SizedBox(
                           height: 75,
                           width: 75,
-                          child: correctAnswers >= 3 ? Image.asset("assets/images/star.png") : Container(),
+                          child: correctAnswers >= 3
+                              ? Image.asset("assets/images/star.png")
+                              : Container(),
                         ),
                         SizedBox(
                           height: 75,
                           width: 75,
-                          child: correctAnswers >= 6 ? Image.asset("assets/images/star.png") : Container(),
+                          child: correctAnswers >= 6
+                              ? Image.asset("assets/images/star.png")
+                              : Container(),
                         ),
                         SizedBox(
                           height: 75,
                           width: 75,
-                          child: correctAnswers >= 9 ? Image.asset("assets/images/star.png") : Container(),
+                          child: correctAnswers >= 9
+                              ? Image.asset("assets/images/star.png")
+                              : Container(),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15,),
-                    const Text("الدرجة الكلية", style: TextStyle(fontSize: 30, color: kidDiagnosticBlue,),),
-                    Text("9 / $correctAnswers", style: const TextStyle(fontSize: 40, color: kidDiagnosticBlue,),),
-                    const SizedBox(height: 15,),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Text(
+                      "الدرجة الكلية",
+                      style: TextStyle(
+                        fontSize: 30,
+                        color: kidDiagnosticBlue,
+                      ),
+                    ),
+                    Text(
+                      "9 / $correctAnswers",
+                      style: const TextStyle(
+                        fontSize: 40,
+                        color: kidDiagnosticBlue,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
                     GestureDetector(
-                      onTapDown: (_) => { _backToMenu(context) },
+                      onTapDown: (_) => {_backToMenu(context)},
                       child: Container(
                         decoration: BoxDecoration(
-                          color: dataTransmitted ? kidDiagnosticBlue : kidDiagnosticBlueDisabled,
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          color: dataTransmitted
+                              ? kidDiagnosticBlue
+                              : kidDiagnosticBlueDisabled,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
                         ),
                         child: const Padding(
-                          padding: EdgeInsets.all(8),child: Text("Menu", style: TextStyle(fontSize: 25, color: Colors.white),),
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            "Menu",
+                            style: TextStyle(fontSize: 25, color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
@@ -179,51 +234,56 @@ class _FinishedScreenState extends State<FinishedScreen> {
   }
 
   List<Widget> _getAllAnswers() {
-    return Logger.answers.map((levelAnswer) =>
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: Row(
-              children: [
-                Text(levels[levelAnswer.levelId].task, style: const TextStyle(fontSize: 30, color: kidDiagnosticBlue),),
-                const SizedBox(width: 15,),
-                ..._getChosenItemsAsImages(levelAnswer)
-              ]
+    return Logger.answers
+        .map(
+          (levelAnswer) => Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Row(children: [
+              Text(
+                levels[levelAnswer.levelId].task,
+                style: const TextStyle(fontSize: 30, color: kidDiagnosticBlue),
+              ),
+              const SizedBox(
+                width: 15,
+              ),
+              ..._getChosenItemsAsImages(levelAnswer)
+            ]),
           ),
-        ),
-    ).toList();
+        )
+        .toList();
   }
 
-List<Widget> _getChosenItemsAsImages(LevelAnswer levelAnswer) {
-    return levelAnswer.chosenOptions.map((option) =>
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: SizedBox(
-            height: 75,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0x99FFFFFF),
-                borderRadius: BorderRadius.all(Radius.circular(10))
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Image.asset(levels[levelAnswer.levelId].options[option].path),
+  List<Widget> _getChosenItemsAsImages(LevelAnswer levelAnswer) {
+    return levelAnswer.chosenOptions
+        .map(
+          (option) => Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: SizedBox(
+              height: 75,
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Color(0x99FFFFFF),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Image.asset(
+                      levels[levelAnswer.levelId].options[option].path),
+                ),
               ),
             ),
           ),
-        ),
-    ).toList();
+        )
+        .toList();
   }
 
   void _backToMenu(BuildContext context) {
     if (!dataTransmitted) {
       return;
     }
-    Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation1, animation2) => const MenuScreen(),
-          transitionDuration: Duration.zero,
-          reverseTransitionDuration: Duration.zero,
-        )
-    );
+    Navigator.of(context).pushReplacement(PageRouteBuilder(
+      pageBuilder: (context, animation1, animation2) => const MenuScreen(),
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    ));
   }
 }

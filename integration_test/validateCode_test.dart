@@ -15,8 +15,6 @@ void main() {
         print('Starting test for valid but already tested code...');
         app.main();
         await tester.pumpAndSettle();
-
-        // Ensure the TextField is available
         expect(find.byType(TextField), findsWidgets);
 
         await tester.enterText(find.byType(TextField).first, '228680');
@@ -26,7 +24,7 @@ void main() {
         await Future.delayed(const Duration(seconds: 3));
         await tester.pumpAndSettle();
 
-        String studentName = 'رهف صالح'; // Replace with actual expected student name
+        String studentName = 'رهف صالح'; 
         print('Checking for error dialog with student name...');
         expect(find.textContaining(' ($studentName)  لقد تم اختبار الطالب'),
             findsOneWidget);
@@ -42,7 +40,6 @@ void main() {
         app.main();
         await tester.pumpAndSettle();
 
-        // Ensure the TextField is available
         expect(find.byType(TextField), findsWidgets);
 
         await tester.enterText(find.byType(TextField).first, '123456');
@@ -66,7 +63,6 @@ void main() {
         app.main();
         await tester.pumpAndSettle();
 
-        // Ensure the TextField is available
         expect(find.byType(TextField), findsWidgets);
 
         await tester.enterText(find.byType(TextField).first, '625085');
