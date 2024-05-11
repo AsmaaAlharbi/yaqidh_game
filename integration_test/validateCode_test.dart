@@ -17,14 +17,14 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(TextField), findsWidgets);
 
-        await tester.enterText(find.byType(TextField).first, '228680');
+        await tester.enterText(find.byType(TextField).first, '262639');
         await Future.delayed(const Duration(seconds: 3));
         await tester.pumpAndSettle();
         await tester.tap(find.byType(ImageButton).first);
         await Future.delayed(const Duration(seconds: 3));
         await tester.pumpAndSettle();
 
-        String studentName = 'رهف صالح'; 
+        String studentName = 'مها احمد'; 
         print('Checking for error dialog with student name...');
         expect(find.textContaining(' ($studentName)  لقد تم اختبار الطالب'),
             findsOneWidget);
@@ -65,7 +65,7 @@ void main() {
 
         expect(find.byType(TextField), findsWidgets);
 
-        await tester.enterText(find.byType(TextField).first, '625085');
+        await tester.enterText(find.byType(TextField).first, '662642');
         await Future.delayed(const Duration(seconds: 3));
         await tester.pumpAndSettle();
         await tester.tap(find.byType(ImageButton).first);
@@ -78,7 +78,7 @@ void main() {
             (Widget widget) =>
                 widget is TaskScreen &&
                 widget.levelId == 0 &&
-                widget.studentId == '22536159',
+                widget.studentId == '26665324',
           ),
           findsOneWidget,
         );
