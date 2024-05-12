@@ -6,6 +6,7 @@ class Camera {
   static bool isLoading = true;
   static bool isRecording = false;
   static late CameraController _cameraController;
+  static String videoFilePath="";
 
   static initCamera() async {
     final cameras = await availableCameras();
@@ -41,6 +42,7 @@ class Camera {
       String destinationPath = '$desktopPath/${file.path.split('/').last}';
       await File(file.path).copy(destinationPath);
       print("File copied to desktop successfully!");
+      videoFilePath=file.path;
       return file.path; // Return the file path
     } catch (e) {
       print("Error stopping video recording: $e");
